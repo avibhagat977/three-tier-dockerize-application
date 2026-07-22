@@ -66,24 +66,39 @@ func main() {
 	}
 	log.Println("[backend] connected to postgres")
 
-	r := gin.Default()
-
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "service": "backend"})
-	})
-
-	r.GET("/projects", listProjects)
-	r.POST("/projects", createProject)
-	r.GET("/tasks", listTasks)
-	r.POST("/tasks", createTask)
-	r.PATCH("/tasks/:id", updateTask)
-	r.GET("/search", searchTasks)
+	r := newRouter()
 
 	port := env("PORT", "8080")
 	log.Printf("[backend] listening on :%s", port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("[backend] FATAL: %v", err)
 	}
+}
+
+func newRouter() *gin.Engine {
+	r := gin.Default()
+
+	r.GET("/health", healthHandler)
+	r.HEAD("/health", healthHandler)
+
+	r.GET("/projects", listProjects)
+	r.HEAD("/projects", listProjects)
+	r.POST("/projects", createProject)
+
+	r.GET("/tasks", listTasks)
+	r.HEAD("/tasks", listTasks)
+	r.POST("/tasks", createTask)
+
+	r.PATCH("/tasks/:id", updateTask)
+
+	r.GET("/search", searchTasks)
+	r.HEAD("/search", searchTasks)
+
+	return r
+}
+
+func healthHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "service": "backend"})
 }
 
 func listProjects(c *gin.Context) {

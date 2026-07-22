@@ -1,26 +1,25 @@
-FROM dhi.io/golang:1-alpine AS builder
+# Stage 1: Build Stage
+FROM golang:1.26-alpine AS build
 
 WORKDIR /app
 
 COPY go.mod go.sum ./
+
 RUN go mod download
 
 COPY . .
-RUN CGO_ENABLED=0 go build -o devboard-backend .
 
-FROM dhi.io/golang:1-alpine
+RUN CGO_ENABLED=0 GOOS=linux go build -o devboard-backend ./
+
+# Stage 2: Production Stage
+FROM alpine:3.21
 
 WORKDIR /app
 
-COPY --from=builder /app/devboard-backend ./devboard-backend
+RUN apk add --no-cache wget
 
-# Ensure binary is executable
-RUN chmod +x ./devboard-backend
-
-# DHI image runs as nonroot by default
-USER nonroot
+COPY --from=build /app/devboard-backend ./
 
 EXPOSE 8080
 
-# Use exec form for proper signal handling
 ENTRYPOINT ["./devboard-backend"]
