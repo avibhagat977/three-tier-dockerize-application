@@ -43,7 +43,7 @@ jobs:
           services='[]'
 
           if [[ "${{ steps.filter.outputs.backend }}" == "true" ]]; then
-            services=$(jq -c --arg service "backend" --arg dockerfile "backend/Dockerfile" --arg context "." '. + [{"service": $service, "dockerfile": $dockerfile, "context": $context}]' <<<"$services")
+            services=$(jq -c --arg service "backend" --arg dockerfile "backend/Dockerfile" --arg context "backend" '. + [{"service": $service, "dockerfile": $dockerfile, "context": $context}]' <<<"$services")
           fi
 
           if [[ "${{ steps.filter.outputs.frontend }}" == "true" ]]; then
