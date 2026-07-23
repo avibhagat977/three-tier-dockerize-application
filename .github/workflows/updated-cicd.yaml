@@ -148,10 +148,13 @@ jobs:
             sudo apt-get update && sudo apt-get install -y  gettext libintl-perl openssh-client  rsync 
             cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
 
-            mkdir -p ./tosend
+            sudo mkdir -p ./tosend
+            sudo chmod -R "$(whoami)":"$(whoami)" ./tosend
+            
             cp -rvf ./remote-deploy/deploy.sh ./tosend/deploy.sh
             envsubst < ./remote-deploy/env.template > ./tosend/.env
 
+            # Function must be defined before it's called, and after ./tosend/.env exists
             upsert_env() {
               local key="$1" val="$2" file="./tosend/.env"
               if grep -q "^$key=" "$file" 2>/dev/null; then
