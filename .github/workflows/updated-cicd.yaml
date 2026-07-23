@@ -130,7 +130,7 @@ jobs:
           echo "backend_tag=backend-${BRANCH_NAME}.${SHORT_SHA}" >> "$GITHUB_OUTPUT"
           echo "frontend_tag=frontend-${BRANCH_NAME}.${SHORT_SHA}" >> "$GITHUB_OUTPUT"
 
-          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
           echo "ecr_registry=${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com" >> "$GITHUB_OUTPUT"
 
 
