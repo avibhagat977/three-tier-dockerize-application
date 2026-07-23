@@ -169,7 +169,7 @@ jobs:
                 echo "${key}=${val}" >> "$file"
               fi
             }
-            
+
             SERVICES=()
 
             if [[ "${DEPLOY_BACKEND}" == "true" ]]; then
@@ -196,5 +196,5 @@ jobs:
             # Run deployment script for each changed service
             # ------------------------------------
             for SERVICE in "${SERVICES[@]}"; do
-              bash deployment/deploy.sh "$SERVICE"
+              bash remote-deploy/deploy.sh "$SERVICE"
             done
