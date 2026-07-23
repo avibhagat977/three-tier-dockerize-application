@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./init/postgres:/docker-entrypoint-initdb.d:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    ports:
+      - "5432:5432"
+
+  backend:
+    image: ${BACKEND_IMAGE_TAG}
+    container_name: backend
+    environment:
+      PORT: ${BACKEND_PORT}
+      POSTGRES_URL: ${POSTGRES_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:${BACKEND_PORT}/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "8000:${BACKEND_PORT}"
+    labels:
+      service: backend
+
+  frontend:
+    # build:
+    #   context: ./frontend
+    #   dockerfile: Dockerfile
+    image: ${FRONTEND_IMAGE_TAG}
+    container_name: frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8080:${FRONTEND_PORT}"
+    labels:
+      service: frontend
+
+volumes:
+  postgres_data:
