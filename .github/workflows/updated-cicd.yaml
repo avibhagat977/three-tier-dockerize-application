@@ -167,8 +167,9 @@ jobs:
                 sed -i "s|^${key}=.*|${key}=${val}|" "$file"
               else
                 echo "${key}=${val}" >> "$file"
-              fi}
-       
+              fi
+            }
+            
             SERVICES=()
 
             if [[ "${DEPLOY_BACKEND}" == "true" ]]; then
