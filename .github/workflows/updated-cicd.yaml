@@ -65,7 +65,6 @@ jobs:
           IMAGE_TAG: ${{ steps.extract_branch.outputs.branch }}.${{ env.SHORT_SHA }}
         run: |
           pwd && ls -la
-          cd frontend
           echo "Build image for frontend with tag $IMAGE_TAG"
           docker build -t "$IMAGE_REGISTRY/devops-todo:$IMAGE_TAG" -f frontend/Dockerfile .
           docker push "$IMAGE_REGISTRY/devops-todo:$IMAGE_TAG"
