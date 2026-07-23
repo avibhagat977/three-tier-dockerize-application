@@ -141,11 +141,24 @@ jobs:
           BACKEND_TAG: ${{ steps.deploy-vars.outputs.backend_tag }}
           FRONTEND_TAG: ${{ steps.deploy-vars.outputs.frontend_tag }}
           ECR_REGISTRY: ${{ steps.deploy-vars.outputs.ecr_registry }}
+          AWS_DEFAULT_REGION: us-east-1
 
         run: |
 
             sudo apt-get update && sudo apt-get install -y  gettext libintl-perl openssh-client  rsync 
             cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
+
+            mkdir -p ./tosend
+            cp -rvf ./remote-deploy/deploy.sh ./tosend/deploy.sh
+            envsubst < ./remote-deploy/env.template > ./tosend/.env
+
+            upsert_env() {
+              local key="$1" val="$2" file="./tosend/.env"
+              if grep -q "^$key=" "$file" 2>/dev/null; then
+                sed -i "s|^${key}=.*|${key}=${val}|" "$file"
+              else
+                echo "${key}=${val}" >> "$file"
+              fi}
        
             SERVICES=()
 
@@ -163,10 +176,6 @@ jobs:
               echo "No services changed -> nothing to deploy."
               exit 0
             fi
-
-            mkdir -p ./tosend
-            cp -rvf ./remote-deploy/deploy.sh ./tosend/deploy.sh
-            envsubst < ./remote-deploy/env.template > ./tosend/.env
 
             echo "Services to deploy: ${SERVICES[*]}"
             export ECR_LOGIN_COMMAND=$(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
