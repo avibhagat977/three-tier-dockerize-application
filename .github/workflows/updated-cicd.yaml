@@ -146,6 +146,7 @@ jobs:
         run: |
 
             sudo apt-get update && sudo apt-get install -y  gettext libintl-perl openssh-client  rsync 
+            REPO_DIR="${GITHUB_WORKSPACE}"
             cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
 
             REPO_DIR="${GITHUB_WORKSPACE}"
@@ -156,8 +157,8 @@ jobs:
 
             cd "${TARGET_DIR}"
 
-            cp -rvf ./remote-deploy/deploy.sh ./tosend/deploy.sh
-            envsubst < ./remote-deploy/env.template > ./tosend/.env
+            cp -rvf ${REPO_DIR}/remote-deploy/deploy.sh ./tosend/deploy.sh
+            envsubst < ${REPO_DIR}/remote-deploy/env.template > ./tosend/.env
 
             # Function must be defined before it's called, and after ./tosend/.env exists
             upsert_env() {
@@ -188,7 +189,7 @@ jobs:
             echo "Services to deploy: ${SERVICES[*]}"
             export ECR_LOGIN_COMMAND=$(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
             echo $ECR_LOGIN_COMMAND > ./tosend/login.sh
-            envsubst '${ECR_LOGIN_COMMAND} ${ENVIRONMENT}' < ./remote-deploy/deploy.sh > ./tosend/deploy.sh
+            envsubst '${ECR_LOGIN_COMMAND} ${ENVIRONMENT}' < ${REPO_DIR}/remote-deploy/deploy.sh > ./tosend/deploy.sh
 
             # ------------------------------------
             # Run deployment script for each changed service
