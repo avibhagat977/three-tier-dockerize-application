@@ -149,8 +149,8 @@ jobs:
             cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
 
             sudo mkdir -p ./tosend
-            sudo chmod -R "$(whoami)":"$(whoami)" ./tosend
-            
+            sudo chown -R "$(whoami)":"$(whoami)" ./tosend
+
             cp -rvf ./remote-deploy/deploy.sh ./tosend/deploy.sh
             envsubst < ./remote-deploy/env.template > ./tosend/.env
 
