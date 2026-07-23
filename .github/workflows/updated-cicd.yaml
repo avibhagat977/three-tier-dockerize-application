@@ -4,7 +4,7 @@ run-name: Deploy to AWS EC2 Prod | by @${{ github.actor }}
 on:
   workflow_dispatch:
   push:
-    branches: [master]
+    branches: [main]
     paths-ignore:
       - '.github/**'
 
@@ -143,7 +143,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.deploy-vars.outputs.ecr_registry }}
 
         run: |
-           
+
             apt-get update && apt-get install -y  gettext libintl  openssh rsync 
             cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
        
