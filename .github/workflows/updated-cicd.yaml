@@ -142,6 +142,7 @@ jobs:
           FRONTEND_TAG: ${{ steps.deploy-vars.outputs.frontend_tag }}
           ECR_REGISTRY: ${{ steps.deploy-vars.outputs.ecr_registry }}
           AWS_DEFAULT_REGION: us-east-1
+          FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
 
         run: |
 
