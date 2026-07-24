@@ -196,10 +196,10 @@ jobs:
            # ------------------------------------
            # Run deployment script for each changed service
            # ------------------------------------
-           for SERVICE in "${SERVICES[@]}"; do
-             echo "Deploying service: $SERVICE"
-             ./tosend/deploy.sh "$SERVICE"
-           done
+          #  for SERVICE in "${SERVICES[@]}"; do
+          #    echo "Deploying service: $SERVICE"
+          #    ./tosend/deploy.sh "$SERVICE"
+          #  done
 
      - name: Deploy to EC2 over SSH
        uses: appleboy/ssh-action@v0.1.6
