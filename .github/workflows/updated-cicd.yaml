@@ -159,6 +159,7 @@ jobs:
 
             cp -rvf ${REPO_DIR}/remote-deploy/deploy.sh ./tosend/deploy.sh
             envsubst < ${REPO_DIR}/remote-deploy/env.template > ./tosend/.env
+            cp -f ${REPO_DIR}/docker-compose.yml ./tosend/docker-compose.yml
 
             # Function must be defined before it's called, and after ./tosend/.env exists
             upsert_env() {
@@ -196,5 +197,5 @@ jobs:
             # Run deployment script for each changed service
             # ------------------------------------
             for SERVICE in "${SERVICES[@]}"; do
-              bash ${REPO_DIR}/remote-deploy/deploy.sh "$SERVICE"
+              bash ./remote-deploy/deploy.sh "$SERVICE"
             done
