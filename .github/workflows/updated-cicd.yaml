@@ -190,7 +190,7 @@ jobs:
             fi
 
             echo "Services to deploy: ${SERVICES[*]}"
-            export ECR_LOGIN_COMMAND="(aws ecr get-login-password --region $AWS_DEFAULT_REGION)
+            export ECR_LOGIN_COMMAND="(aws ecr get-login-password --region $AWS_DEFAULT_REGION)"
             echo $ECR_LOGIN_COMMAND > ./tosend/login.sh
             envsubst '${ECR_LOGIN_COMMAND} ${ENVIRONMENT}' < $GITHUB_WORKSPACE/remote-deploy/deploy.sh > ./tosend/deploy.sh
 
