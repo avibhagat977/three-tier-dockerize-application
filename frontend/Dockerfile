@@ -29,22 +29,3 @@ EXPOSE 4173
 ENTRYPOINT ["node", "--no-warnings"]
 
 CMD ["./node_modules/vite/bin/vite.js", "preview", "--port", "4173", "--host", "--config", "./vite.preview.config.js"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
