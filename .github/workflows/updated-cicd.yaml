@@ -148,7 +148,8 @@ jobs:
 
 
        run: |
-           sudo apt-get update && sudo apt-get install -y  gettext libintl  openssh  rsync
+           sudo apt-get update 
+           sudo apt-get install -y gettext openssh-client openssh-server rsync
            cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
      
            SERVICES=()
