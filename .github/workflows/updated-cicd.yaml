@@ -195,9 +195,17 @@ jobs:
            # ------------------------------------
            # Run deployment script for each changed service
            # ------------------------------------
-           for SERVICE in "${SERVICES[@]}"; do
-             echo "Deploying service: $SERVICE"
-             bash ./tosend/deploy.sh "$SERVICE"
-           done
-           
-          
+          #  for SERVICE in "${SERVICES[@]}"; do
+          #    echo "Deploying service: $SERVICE"
+          #    bash ./deployment/deploy.sh "$SERVICE"
+          #  done
+       uses: appleboy/ssh-action@v0.1.6
+       with:
+        host: ${{ vars.REMOTE_HOST }}
+        username: ${{ vars.REMOTE_USER }}
+        key: ${{ secrets.REMOTE_SSH_KEY }}
+        port: ${{ vars.REMOTE_PORT }}
+        script: |
+          cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
+          bash ./deploy.sh
+    
