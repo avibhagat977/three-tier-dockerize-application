@@ -33,7 +33,7 @@ docker compose -f docker-compose.yml --env-file .env down "$SERVICE_NAME"
 # ------------------------------------
 # Login ECR
 # ------------------------------------
-${ECR_LOGIN_COMMAND}
+eval "${ECR_LOGIN_COMMAND}"
 
 # ------------------------------------
 # Pull & Start

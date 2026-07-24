@@ -190,13 +190,14 @@ jobs:
             fi
 
             echo "Services to deploy: ${SERVICES[*]}"
-            export ECR_LOGIN_COMMAND="(aws ecr get-login-password --region $AWS_DEFAULT_REGION)"
+            export ECR_LOGIN_COMMAND="aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}"
             echo $ECR_LOGIN_COMMAND > ./tosend/login.sh
             envsubst '${ECR_LOGIN_COMMAND} ${ENVIRONMENT}' < $GITHUB_WORKSPACE/remote-deploy/deploy.sh > ./tosend/deploy.sh
 
             # ------------------------------------
             # Run deployment script for each changed service
             # ------------------------------------
+            cd ./tosend
             for SERVICE in "${SERVICES[@]}"; do
-              bash ./tosend/deploy.sh "$SERVICE"
+              bash deploy.sh "$SERVICE"
             done
