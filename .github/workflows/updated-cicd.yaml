@@ -146,20 +146,21 @@ jobs:
         run: |
 
             sudo apt-get update && sudo apt-get install -y  gettext libintl-perl openssh-client  rsync 
-            REPO_DIR="${GITHUB_WORKSPACE}"
-            cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
-
-            REPO_DIR="${GITHUB_WORKSPACE}"
+            
             TARGET_DIR="/home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}"
+
+            echo "Workspace: $GITHUB_WORKSPACE"
+            ls -la "$GITHUB_WORKSPACE/remote-deploy/"
+            
+            cd "${GITHUB_WORKSPACE}"
+            cd "${TARGET_DIR}"
 
             sudo mkdir -p ./tosend
             sudo chown -R "$(whoami)":"$(whoami)" ./tosend
 
-            cd "${TARGET_DIR}"
-
-            cp -rvf ${REPO_DIR}/remote-deploy/deploy.sh ./tosend/deploy.sh
-            envsubst < ${REPO_DIR}/remote-deploy/env.template > ./tosend/.env
-            cp -f ${REPO_DIR}/docker-compose.yml ./tosend/docker-compose.yml
+            cp -rvf $GITHUB_WORKSPACE/remote-deploy/deploy.sh ./tosend/deploy.sh
+            envsubst < $GITHUB_WORKSPACE/remote-deploy/env.template > ./tosend/.env
+            cp -f $GITHUB_WORKSPACE/docker-compose.yml ./tosend/docker-compose.yml
 
             # Function must be defined before it's called, and after ./tosend/.env exists
             upsert_env() {
@@ -189,9 +190,9 @@ jobs:
             fi
 
             echo "Services to deploy: ${SERVICES[*]}"
-            export ECR_LOGIN_COMMAND="aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}"
+            export ECR_LOGIN_COMMAND="(aws ecr get-login-password --region $AWS_DEFAULT_REGION)
             echo $ECR_LOGIN_COMMAND > ./tosend/login.sh
-            envsubst '${ECR_LOGIN_COMMAND} ${ENVIRONMENT}' < ${REPO_DIR}/remote-deploy/deploy.sh > ./tosend/deploy.sh
+            envsubst '${ECR_LOGIN_COMMAND} ${ENVIRONMENT}' < $GITHUB_WORKSPACE/remote-deploy/deploy.sh > ./tosend/deploy.sh
 
             # ------------------------------------
             # Run deployment script for each changed service
