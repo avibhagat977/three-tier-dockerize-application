@@ -160,7 +160,7 @@ jobs:
 
             cp -rvf $GITHUB_WORKSPACE/remote-deploy/deploy.sh ./tosend/deploy.sh
             envsubst < $GITHUB_WORKSPACE/remote-deploy/env.template > ./tosend/.env
-            cp -f $GITHUB_WORKSPACE/docker-compose.yml ./tosend/docker-compose.yml
+            cp -f "$GITHUB_WORKSPACE/remote-deploy/docker-compose.yml" ./tosend/docker-compose.yml
 
             # Function must be defined before it's called, and after ./tosend/.env exists
             upsert_env() {
