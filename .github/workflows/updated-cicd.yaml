@@ -198,5 +198,5 @@ jobs:
             # Run deployment script for each changed service
             # ------------------------------------
             for SERVICE in "${SERVICES[@]}"; do
-              bash ./remote-deploy/deploy.sh "$SERVICE"
+              bash ./tosend/deploy.sh "$SERVICE"
             done
