@@ -207,16 +207,12 @@ jobs:
          ls -la ./tosend     
 
      - name: Copy deployment files to EC2
-       uses: appleboy/scp-action@v0.1.5
-       with:
-         host: ${{ secrets.EC2_HOST }}
-         username: ${{ secrets.EC2_USER }}
-         key: ${{ secrets.EC2_SSH_KEY }}
-         source: |
-            tosend/.env
-            tosend/docker-compose.yml
-         target: /home/${{ secrets.EC2_USER }}/
-         overwrite: true
+       run: |
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        scp -o StrictHostKeyChecking=no \
+        ./tosend/.env \
+        ./tosend/docker-compose.yml \
+        ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/
 
      - name: Run deployment on EC2
        uses: appleboy/ssh-action@v0.1.6
