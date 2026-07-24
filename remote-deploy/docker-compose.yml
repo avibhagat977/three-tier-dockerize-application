@@ -19,7 +19,7 @@ services:
       - "5432:5432"
 
   backend:
-    image: ${BACKEND_IMAGE_TAG}
+    image: ${ECR_REGISTRY_REPO}:${BACKEND_IMAGE_TAG}
     container_name: backend
     environment:
       PORT: ${BACKEND_PORT}
@@ -42,7 +42,7 @@ services:
     # build:
     #   context: ./frontend
     #   dockerfile: Dockerfile
-    image: ${FRONTEND_IMAGE_TAG}
+    image: ${ECR_REGISTRY_REPO}:${FRONTEND_IMAGE_TAG}
     container_name: frontend
     depends_on:
       backend:

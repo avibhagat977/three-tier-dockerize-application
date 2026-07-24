@@ -136,7 +136,7 @@ jobs:
          echo "frontend_tag=frontend-${BRANCH_NAME}.${SHORT_SHA}" >> "$GITHUB_OUTPUT"
 
          ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
-         echo "ecr_registry=${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com" >> "$GITHUB_OUTPUT"
+         echo "ecr_registry_repo=${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/devops-todo" >> "$GITHUB_OUTPUT"
 
      - name: Deploy changed services on EC2
        env:
@@ -144,14 +144,16 @@ jobs:
          DEPLOY_FRONTEND: ${{ needs.changes.outputs.frontend }}
          BACKEND_IMAGE_TAG: ${{ steps.deploy-vars.outputs.backend_tag }}
          FRONTEND_IMAGE_TAG: ${{ steps.deploy-vars.outputs.frontend_tag }}
-         ECR_REGISTRY: ${{ steps.deploy-vars.outputs.ecr_registry }}
+         ECR_REGISTRY_REPO: ${{ steps.deploy-vars.outputs.ecr_registry_repo }}
          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
          POSTGRES_URL: ${{ vars.POSTGRES_URL }}
          BACKEND_PORT: ${{ vars.BACKEND_PORT }}
          FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
-
+         AWS_DEFAULT_REGION: us-east-1
+         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
        run: |
            sudo apt-get update 
