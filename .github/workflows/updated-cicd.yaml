@@ -142,8 +142,8 @@ jobs:
        env:
          DEPLOY_BACKEND: ${{ needs.changes.outputs.backend }}
          DEPLOY_FRONTEND: ${{ needs.changes.outputs.frontend }}
-         BACKEND_TAG: ${{ steps.deploy-vars.outputs.backend_tag }}
-         FRONTEND_TAG: ${{ steps.deploy-vars.outputs.frontend_tag }}
+         BACKEND_IMAGE_TAG: ${{ steps.deploy-vars.outputs.backend_tag }}
+         FRONTEND_IMAGE_TAG: ${{ steps.deploy-vars.outputs.frontend_tag }}
          ECR_REGISTRY: ${{ steps.deploy-vars.outputs.ecr_registry }}
 
 
@@ -155,12 +155,12 @@ jobs:
            SERVICES=()
 
            if [[ "${DEPLOY_BACKEND}" == "true" ]]; then
-             upsert_env "BACKEND_IMAGE_TAG" "${BACKEND_TAG}"
+            #  upsert_env "BACKEND_IMAGE_TAG" "${BACKEND_TAG}"
              SERVICES+=("backend")
            fi
 
            if [[ "${DEPLOY_FRONTEND}" == "true" ]]; then
-             upsert_env "FRONTEND_IMAGE_TAG" "${FRONTEND_TAG}"
+            #  upsert_env "FRONTEND_IMAGE_TAG" "${FRONTEND_TAG}"
              SERVICES+=("frontend")
            fi
 
@@ -172,15 +172,19 @@ jobs:
            mkdir -p ./tosend
            cp -rvf ./remote-deploy/deploy.sh ./tosend/deploy.sh
            envsubst < ./remote-deploy/env.template > ./tosend/.env
+           echo "Environment variables for deployment: ......"
+           cat ./tosend/.env
 
            echo "Services to deploy: ${SERVICES[*]}"
            export ECR_LOGIN_COMMAND=$(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
            echo $ECR_LOGIN_COMMAND > ./tosend/login.sh
-           envsubst '${ECR_LOGIN_COMMAND} ${ENVIRONMENT}' < ./remote-deploy/deploy.sh > ./tosend/deploy.sh
-
+           envsubst '${ECR_LOGIN_COMMAND}' < ./remote-deploy/deploy.sh > ./tosend/deploy.sh
+           echo "Deployment script to run on remote server ......"
+           cat  ./tosend/deploy.sh
            # ------------------------------------
            # Run deployment script for each changed service
            # ------------------------------------
            for SERVICE in "${SERVICES[@]}"; do
-             bash deployment/deploy.sh "$SERVICE"
+             echo "Deploying service: $SERVICE"
+            #  bash deployment/deploy.sh "$SERVICE"
            done
