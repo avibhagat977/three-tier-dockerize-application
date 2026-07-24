@@ -208,8 +208,8 @@ jobs:
 
      - name: Copy deployment files to EC2
        run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        # mkdir -p ~/.ssh
+        # ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
         scp -o StrictHostKeyChecking=no \
         ./tosend/.env \
         ./tosend/docker-compose.yml \
