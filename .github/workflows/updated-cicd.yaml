@@ -179,6 +179,7 @@ jobs:
 
            mkdir -p ./tosend
            envsubst < ./remote-deploy/env.template > ./tosend/.env
+           ls -la ./tosend
            echo "Environment variables for deployment: ......"
            # cat ./tosend/.env
 
@@ -208,8 +209,8 @@ jobs:
          username: ${{ secrets.EC2_USER }}
          key: ${{ secrets.EC2_SSH_KEY }}
          source: |
-           ./tosend/.env
-           ./tosend/docker-compose.yml
+           /github/workspace/tosend/.env
+           /github/workspace/tosend/docker-compose.yml
          target: /home/${{ secrets.EC2_USER }}/
          overwrite: true
 
