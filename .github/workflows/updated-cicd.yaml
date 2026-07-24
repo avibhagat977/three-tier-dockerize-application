@@ -145,12 +145,18 @@ jobs:
          BACKEND_IMAGE_TAG: ${{ steps.deploy-vars.outputs.backend_tag }}
          FRONTEND_IMAGE_TAG: ${{ steps.deploy-vars.outputs.frontend_tag }}
          ECR_REGISTRY: ${{ steps.deploy-vars.outputs.ecr_registry }}
+         POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+         POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+         POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+         POSTGRES_URL: ${{ vars.POSTGRES_URL }}
+         BACKEND_PORT: ${{ vars.BACKEND_PORT }}
+         FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
 
 
        run: |
            sudo apt-get update 
            sudo apt-get install -y gettext openssh-client openssh-server rsync
-           cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
+            #  cd /home/${{ vars.REMOTE_USER }}/${{ vars.DOCKER_REMOTE_FOLDER }}
      
            SERVICES=()
 
@@ -170,7 +176,6 @@ jobs:
            fi
 
            mkdir -p ./tosend
-           cp -rvf ./remote-deploy/deploy.sh ./tosend/deploy.sh
            envsubst < ./remote-deploy/env.template > ./tosend/.env
            echo "Environment variables for deployment: ......"
            cat ./tosend/.env
@@ -179,8 +184,10 @@ jobs:
            export ECR_LOGIN_COMMAND=$(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
            echo $ECR_LOGIN_COMMAND > ./tosend/login.sh
            envsubst '${ECR_LOGIN_COMMAND}' < ./remote-deploy/deploy.sh > ./tosend/deploy.sh
+           envsubst < ./remote-deploy/docker-compose.yml > ./tosend/docker-compose.yml
            echo "Deployment script to run on remote server ......"
            cat  ./tosend/deploy.sh
+           cat ./tosend/docker-compose.yml
            # ------------------------------------
            # Run deployment script for each changed service
            # ------------------------------------
