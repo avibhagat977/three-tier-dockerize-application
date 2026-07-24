@@ -127,23 +127,6 @@ jobs:
      - name: Checkout
        uses: actions/checkout@v3
 
-     - name: Configure AWS credentials (Access Keys)
-       if: ${{ vars.ECR_AWS_ROLE_ARN == '' }}
-       uses: aws-actions/configure-aws-credentials@v2
-       with:
-         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         aws-region: us-east-1
-         mask-aws-account-id: true
-
-     - name: Configure AWS credentials (OIDC)
-       if: ${{ vars.ECR_AWS_ROLE_ARN != '' }}
-       uses: aws-actions/configure-aws-credentials@v4
-       with:
-         role-to-assume: ${{ vars.ECR_AWS_ROLE_ARN }}
-         role-session-name: github-deploy-${{ github.run_id }}
-         aws-region: us-east-1
-
      - name: Set deploy variables
        id: deploy-vars
        run: |
@@ -207,10 +190,14 @@ jobs:
            chmod +x ./tosend/deploy.sh
            envsubst < ./remote-deploy/docker-compose.yml > ./tosend/docker-compose.yml
            echo "Deployment script to run on remote server ......"
-           cat ./tosend/deploy.sh
+           cat  ./tosend/deploy.sh
            cat ./tosend/docker-compose.yml
-
+           # ------------------------------------
+           # Run deployment script for each changed service
+           # ------------------------------------
            for SERVICE in "${SERVICES[@]}"; do
              echo "Deploying service: $SERVICE"
-             ./tosend/deploy.sh "$SERVICE"
+             bash ./tosend/deploy.sh "$SERVICE"
            done
+           
+          
