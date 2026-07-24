@@ -180,18 +180,18 @@ jobs:
            mkdir -p ./tosend
            envsubst < ./remote-deploy/env.template > ./tosend/.env
            echo "Environment variables for deployment: ......"
-           cat ./tosend/.env
+           # cat ./tosend/.env
 
            echo "Services to deploy: ${SERVICES[*]}"
            ECR_REGISTRY_HOST="${ECR_REGISTRY_REPO%/*}"
            export ECR_LOGIN_COMMAND="aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_HOST}"
            printf '%s\n' "$ECR_LOGIN_COMMAND" > ./tosend/login.sh
            envsubst '${ECR_LOGIN_COMMAND}' < ./remote-deploy/deploy.sh > ./tosend/deploy.sh
-           chmod +x ./tosend/deploy.sh
+           #chmod +x ./tosend/deploy.sh
            envsubst < ./remote-deploy/docker-compose.yml > ./tosend/docker-compose.yml
            echo "Deployment script to run on remote server ......"
-           cat ./tosend/deploy.sh
-           cat ./tosend/docker-compose.yml
+           # cat ./tosend/deploy.sh
+           # cat ./tosend/docker-compose.yml
 
            # ------------------------------------
            # Run deployment script for each changed service
@@ -209,4 +209,5 @@ jobs:
          key: ${{ secrets.EC2_SSH_KEY }}
          script: |
            cat /home/${{ secrets.EC2_USER }}
+           ls -la /home/${{ secrets.EC2_USER }}
            echo "Deployment package is prepared on the runner"
