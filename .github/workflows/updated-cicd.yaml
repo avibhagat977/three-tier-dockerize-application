@@ -183,8 +183,9 @@ jobs:
            cat ./tosend/.env
 
            echo "Services to deploy: ${SERVICES[*]}"
-           export ECR_LOGIN_COMMAND=$(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-           echo $ECR_LOGIN_COMMAND > ./tosend/login.sh
+           ECR_REGISTRY_HOST="${ECR_REGISTRY_REPO%/*}"
+           export ECR_LOGIN_COMMAND="aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_HOST}"
+           printf '%s\n' "$ECR_LOGIN_COMMAND" > ./tosend/login.sh
            envsubst '${ECR_LOGIN_COMMAND}' < ./remote-deploy/deploy.sh > ./tosend/deploy.sh
            envsubst < ./remote-deploy/docker-compose.yml > ./tosend/docker-compose.yml
            echo "Deployment script to run on remote server ......"
