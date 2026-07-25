@@ -194,13 +194,7 @@ jobs:
            # cat ./tosend/deploy.sh
            # cat ./tosend/docker-compose.yml
 
-           # ------------------------------------
-           # Run deployment script for each changed service
-           # ------------------------------------
-          #  for SERVICE in "${SERVICES[@]}"; do
-          #    echo "Deploying service: $SERVICE"
-          #    ./tosend/deploy.sh "$SERVICE"
-          #  done
+           
      - name: Debug to send contents
        run: |
          echo "PWD: $(pwd)"
@@ -225,6 +219,10 @@ jobs:
          script: |
           cd /home/${{ secrets.EC2_USER }}/deployment/tosend
           chmod +x deploy.sh
-          for SERVICE in backend frontend; do
-            bash deploy.sh "$SERVICE"
-          done
+           # ------------------------------------
+           # Run deployment script for each changed service
+           # ------------------------------------
+            for SERVICE in "${SERVICES[@]}"; do
+             echo "Deploying service: $SERVICE"
+             bash deploy.sh "$SERVICE"
+           done
