@@ -228,10 +228,9 @@ jobs:
            ls -la /home/${{ secrets.EC2_USER }}/deployment/tosend
            cat .env
            cat docker-compose.yml
-           chmod +x login.sh deploy.sh
-           ./login.sh
+           chmod +x deploy.sh
            ./deploy.sh    
-           docker compose -f docker-compose.yml --env-file .env pull
-           docker compose -f docker-compose.yml --env-file .env up -d
-           docker compose -f docker-compose.yml --env-file .env ps
+          #  docker compose -f docker-compose.yml --env-file .env pull
+          #  docker compose -f docker-compose.yml --env-file .env up -d
+          #  docker compose -f docker-compose.yml --env-file .env ps
       
