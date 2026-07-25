@@ -223,14 +223,8 @@ jobs:
          username: ${{ secrets.EC2_USER }}
          key: ${{ secrets.EC2_SSH_KEY }}
          script: |
-           cd /home/${{ secrets.EC2_USER }}/deployment/tosend
-           echo "PWD: $(pwd)"
-           ls -la /home/${{ secrets.EC2_USER }}/deployment/tosend
-           cat .env
-           cat docker-compose.yml
-           chmod +x deploy.sh
-           bash  deploy.sh    
-          #  docker compose -f docker-compose.yml --env-file .env pull
-          #  docker compose -f docker-compose.yml --env-file .env up -d
-          #  docker compose -f docker-compose.yml --env-file .env ps
-      
+          cd /home/${{ secrets.EC2_USER }}/deployment/tosend
+          chmod +x deploy.sh
+          for SERVICE in backend frontend; do
+            bash deploy.sh "$SERVICE"
+          done
