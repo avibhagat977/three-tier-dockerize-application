@@ -229,7 +229,7 @@ jobs:
            cat .env
            cat docker-compose.yml
            chmod +x deploy.sh
-           ./deploy.sh    
+           bash  deploy.sh    
           #  docker compose -f docker-compose.yml --env-file .env pull
           #  docker compose -f docker-compose.yml --env-file .env up -d
           #  docker compose -f docker-compose.yml --env-file .env ps
