@@ -218,6 +218,7 @@ jobs:
          key: ${{ secrets.EC2_SSH_KEY }}
          script: |
           cd /home/${{ secrets.EC2_USER }}/deployment/tosend
+          cat docker-compose.yml
           chmod +x deploy.sh
            # ------------------------------------
            # Run deployment script for each changed service
