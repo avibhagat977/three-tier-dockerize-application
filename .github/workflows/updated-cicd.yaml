@@ -224,7 +224,8 @@ jobs:
          key: ${{ secrets.EC2_SSH_KEY }}
          script: |
            cd /home/${{ secrets.EC2_USER }}
-           docker compose -f docker-compose.yml --env-file .env pull
-           docker compose -f docker-compose.yml --env-file .env up -d
-           docker compose -f docker-compose.yml --env-file .env ps
+           ls -la /home/${{ secrets.EC2_USER }}
+          #  docker compose -f docker-compose.yml --env-file .env pull
+          #  docker compose -f docker-compose.yml --env-file .env up -d
+          #  docker compose -f docker-compose.yml --env-file .env ps
       
