@@ -179,7 +179,7 @@ jobs:
 
            mkdir -p ./tosend
            envsubst < ./remote-deploy/env.template > ./tosend/.env
-           envsubst < ./remote-deploy/nginx.conf.template > ./tosend/nginx.conf
+           envsubst '${FRONTEND_PORT}' < ./remote-deploy/nginx.conf.template > ./tosend/nginx.conf
            ls -la ./tosend
            echo "Environment variables for deployment: ......"
            # cat ./tosend/.env
