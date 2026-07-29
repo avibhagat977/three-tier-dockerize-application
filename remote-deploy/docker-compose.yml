@@ -26,9 +26,9 @@ services:
     environment:
       PORT: ${BACKEND_PORT}
       POSTGRES_URL: ${POSTGRES_URL}
-    depends_on:
-      postgres:
-        condition: service_healthy
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:${BACKEND_PORT}/health"]
       interval: 5s
@@ -62,6 +62,8 @@ services:
   nginx:
     image: nginx:1.27-alpine
     container_name: nginx
+    environment:
+      FRONTEND_PORT: ${FRONTEND_PORT}
     depends_on:
       frontend:
         condition: service_healthy
@@ -73,6 +75,7 @@ services:
       service: nginx
     networks:
       - todo
+
 volumes:
   postgres_data:
 

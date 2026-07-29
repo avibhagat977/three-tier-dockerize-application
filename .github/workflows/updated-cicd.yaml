@@ -226,7 +226,7 @@ jobs:
            # ------------------------------------
            # Run deployment script for each changed service
            # ------------------------------------
-            for SERVICE in "${SERVICES[@]}"; do
-             echo "Deploying service: $SERVICE"
-             bash deploy.sh "$SERVICE"
-           done
+          for SERVICE in "${SERVICES[@]}"; do
+            echo "Deploying service: $SERVICE"
+            bash deploy.sh "$SERVICE"
+          done
