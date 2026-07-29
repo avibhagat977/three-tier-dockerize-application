@@ -183,8 +183,8 @@ jobs:
            mkdir -p ./tosend/init/postgres
 
            # Copy database initialization files
-           cp backend/init/postgres/01_schema.sql ./tosend/init/postgres/
-           cp backend/init/postgres/02_seed.sql ./tosend/init/postgres/
+           cp init/postgres/01_schema.sql ./tosend/init/postgres/
+           cp init/postgres/02_seed.sql ./tosend/init/postgres/
            echo "===== Contents of ./tosend ====="
            find ./tosend
 
