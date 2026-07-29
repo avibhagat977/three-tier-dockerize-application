@@ -178,6 +178,16 @@ jobs:
            fi
 
            mkdir -p ./tosend
+
+           # Create the postgres init directory
+           mkdir -p ./tosend/init/postgres
+
+           # Copy database initialization files
+           cp backend/init/postgres/01_schema.sql ./tosend/init/postgres/
+           cp backend/init/postgres/02_seed.sql ./tosend/init/postgres/
+           echo "===== Contents of ./tosend ====="
+           find ./tosend
+
            envsubst < ./remote-deploy/env.template > ./tosend/.env
            envsubst '${FRONTEND_PORT}' < ./remote-deploy/nginx.conf.template > ./tosend/nginx.conf
            ls -la ./tosend
