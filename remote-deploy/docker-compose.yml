@@ -15,8 +15,10 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
-    # ports:
-    #   - "5432:5432"
+    ports:
+      - "5432:5432"
+    networks:
+      - todo
 
   backend:
     image: ${ECR_REGISTRY_REPO}:${BACKEND_IMAGE_TAG}
@@ -38,6 +40,8 @@ services:
 
     labels:
       service: backend
+    networks:
+      - todo
 
   frontend:
     # build:
@@ -53,6 +57,8 @@ services:
 
     labels:
       service: frontend
+    networks:
+      - todo
   nginx:
     image: nginx:1.27-alpine
     container_name: nginx
@@ -65,5 +71,11 @@ services:
       - "80:80"
     labels:
       service: nginx
+    networks:
+      - todo
 volumes:
   postgres_data:
+
+networks:
+  todo:
+    driver: bridge
