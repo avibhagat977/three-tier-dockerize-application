@@ -148,7 +148,7 @@ jobs:
          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
-         POSTGRES_URL: ${{ vars.POSTGRES_URL }}
+         POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
          BACKEND_PORT: ${{ vars.BACKEND_PORT }}
          FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
          AWS_DEFAULT_REGION: us-east-1
