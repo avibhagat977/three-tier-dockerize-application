@@ -195,10 +195,10 @@ jobs:
            # cat ./tosend/docker-compose.yml
 
            
-     - name: Debug to send contents
-       run: |
-         echo "PWD: $(pwd)"
-         ls -la ./tosend     
+    #  - name: Debug to send contents
+    #    run: |
+    #      echo "PWD: $(pwd)"
+    #      ls -la ./tosend     
 
      - name: Copy deployment files to EC2
        uses: appleboy/scp-action@v0.1.7
