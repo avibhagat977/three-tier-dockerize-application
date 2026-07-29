@@ -179,6 +179,7 @@ jobs:
 
            mkdir -p ./tosend
            envsubst < ./remote-deploy/env.template > ./tosend/.env
+           envsubst < ./remote-deploy/nginx.conf.template > ./tosend/nginx.conf
            ls -la ./tosend
            echo "Environment variables for deployment: ......"
            # cat ./tosend/.env
@@ -206,7 +207,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "./tosend/.env,./tosend/docker-compose.yml,./tosend/deploy.sh,./tosend/login.sh"
+          # source: "./tosend/.env,./tosend/docker-compose.yml,./tosend/deploy.sh,./tosend/login.sh,./tosend/nginx.conf"
+          source: "./tosend/*"
           target: "/home/${{ secrets.EC2_USER }}/deployment"
           strip_components: 1
 
@@ -217,8 +219,9 @@ jobs:
          username: ${{ secrets.EC2_USER }}
          key: ${{ secrets.EC2_SSH_KEY }}
          script: |
-          cd /home/${{ secrets.EC2_USER }}/deployment/tosend
-          cat docker-compose.yml
+          cd /home/${{ secrets.EC2_USER }}/deployment
+          # cd /home/${{ secrets.EC2_USER }}/deployment/tosend
+          # cat docker-compose.yml
           chmod +x deploy.sh
            # ------------------------------------
            # Run deployment script for each changed service

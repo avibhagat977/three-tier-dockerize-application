@@ -41,6 +41,9 @@ eval "${ECR_LOGIN_COMMAND}"
 docker compose -f docker-compose.yml --env-file .env pull "$SERVICE_NAME"
 docker compose -f docker-compose.yml --env-file .env up -d "$SERVICE_NAME"
 
+docker compose -f docker-compose.yml --env-file .env up -d nginx
+
+
 
 # ------------------------------------
 # Cleanup old images
