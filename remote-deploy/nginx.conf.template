@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name _;
+    server_name todo.thegenesys.tech;
 
     # Docker's embedded DNS resolver — required for runtime (not startup-only) resolution
     resolver 127.0.0.11 valid=30s;
