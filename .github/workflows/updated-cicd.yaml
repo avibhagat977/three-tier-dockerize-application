@@ -237,16 +237,33 @@ jobs:
           ls -la 
           chmod +x deploy.sh
 
-          if [ "$DEPLOY_BACKEND" = "true" ]; then
-            echo "======================================"
-            echo "Deploying backend..."
-            echo "======================================"
-            bash deploy.sh backend
+          # if [ "$DEPLOY_BACKEND" = "true" ]; then
+          #   echo "======================================"
+          #   echo "Deploying backend..."
+          #   echo "======================================"
+          #   bash deploy.sh backend
+          # fi
+
+          # if [ "$DEPLOY_FRONTEND" = "true" ]; then
+          #   echo "======================================"
+          #   echo "Deploying frontend..."
+          #   echo "======================================"
+          #   bash deploy.sh frontend
+          # fi
+
+          # ------------------------------------
+          # for SERVICE in "${SERVICES[@]}"; do
+          #   echo "Deploying service: $SERVICE"
+          #   bash deploy.sh "$SERVICE"
+          # done
+          if [ ${#SERVICES[@]} -eq 0 ]; then
+              echo "No services changed. Nothing to deploy."
+              exit 0
           fi
 
-          if [ "$DEPLOY_FRONTEND" = "true" ]; then
-            echo "======================================"
-            echo "Deploying frontend..."
-            echo "======================================"
-            bash deploy.sh frontend
-          fi
+          for SERVICE in "${SERVICES[@]}"; do
+              echo "======================================"
+              echo "Deploying service: $SERVICE"
+              echo "======================================"
+              bash deploy.sh "$SERVICE"
+          done
