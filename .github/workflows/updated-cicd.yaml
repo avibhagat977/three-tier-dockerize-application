@@ -234,6 +234,7 @@ jobs:
         envs: DEPLOY_BACKEND,DEPLOY_FRONTEND
         script: |
           cd /home/${{ secrets.EC2_USER }}/deployment
+          ls -la 
           chmod +x deploy.sh
 
           if [ "$DEPLOY_BACKEND" = "true" ]; then

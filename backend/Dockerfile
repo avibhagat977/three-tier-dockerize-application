@@ -23,3 +23,5 @@ COPY --from=build /app/devboard-backend ./
 EXPOSE 8080
 
 ENTRYPOINT ["./devboard-backend"]
+
+
