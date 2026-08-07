@@ -224,19 +224,28 @@ jobs:
 
      - name: Run deployment on EC2
        uses: appleboy/ssh-action@v0.1.6
+       env:
+        DEPLOY_BACKEND: ${{ needs.changes.outputs.backend }}
+        DEPLOY_FRONTEND: ${{ needs.changes.outputs.frontend }}
        with:
-         host: ${{ secrets.EC2_HOST }}
-         username: ${{ secrets.EC2_USER }}
-         key: ${{ secrets.EC2_SSH_KEY }}
-         script: |
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        envs: DEPLOY_BACKEND,DEPLOY_FRONTEND
+        script: |
           cd /home/${{ secrets.EC2_USER }}/deployment
-          # cd /home/${{ secrets.EC2_USER }}/deployment/tosend
-          # cat docker-compose.yml
           chmod +x deploy.sh
-           # ------------------------------------
-           # Run deployment script for each changed service
-           # ------------------------------------
-          for SERVICE in "${SERVICES[@]}"; do
-            echo "Deploying service: $SERVICE"
-            bash deploy.sh "$SERVICE"
-          done
+
+          if [ "$DEPLOY_BACKEND" = "true" ]; then
+            echo "======================================"
+            echo "Deploying backend..."
+            echo "======================================"
+            bash deploy.sh backend
+          fi
+
+          if [ "$DEPLOY_FRONTEND" = "true" ]; then
+            echo "======================================"
+            echo "Deploying frontend..."
+            echo "======================================"
+            bash deploy.sh frontend
+          fi
