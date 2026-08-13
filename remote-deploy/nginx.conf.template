@@ -1,0 +1,97 @@
+server {
+    listen 443 ssl; # managed by Certbot
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    server_name todo.thegenesys.tech;
+
+    # Docker's embedded DNS resolver — required for runtime (not startup-only) resolution
+    resolver 127.0.0.11 valid=30s;
+
+
+ 
+    ssl_certificate /etc/nginx/certs/todo.thegenesys.tech/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/nginx/certs/todo.thegenesys.tech/privkey.pem; # managed by Certbot
+    include /etc/nginx/certs/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/nginx/certs/ssl-dhparams.pem; # managed by Certbot
+
+
+    # ---- Timeouts ----
+    proxy_connect_timeout 5s;
+    proxy_send_timeout 60s;
+    proxy_read_timeout 60s;
+
+    # ---- Gzip compression ----
+    gzip on;
+    gzip_vary on;
+    gzip_comp_level 6;
+    gzip_min_length 256;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/javascript
+        application/json
+        application/xml
+        application/xml+rss
+        image/svg+xml;
+
+    # ---- Simple health check endpoint (for orchestrator probes) ----
+    location = /healthz {
+        access_log off;
+        return 200 "ok\n";
+        add_header Content-Type text/plain;
+    }
+
+    # ---- Long-cache hashed static assets (CRA/Vite output content-hashed filenames) ----
+    location ~* \.(?:js|css|woff2?|ttf|eot|svg|png|jpe?g|gif|ico)$ {
+        # $upstream forces per-request DNS lookup via the resolver above,
+        # instead of resolving "frontend" once at nginx startup.
+        set $upstream frontend:${FRONTEND_PORT};
+        proxy_pass http://$upstream;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # ---- Main app (index.html, API routes proxied elsewhere if needed) ----
+    location / {
+        set $upstream frontend:${FRONTEND_PORT};
+        proxy_pass http://$upstream;
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # --- Uncomment below ONLY if frontend is a dev server needing HMR/WebSockets ---
+        # (e.g. `npm start` / CRA dev server / Vite dev mode). For a static production
+        # build served by nginx/serve inside the frontend container, leave this out.
+        #
+        # proxy_set_header Upgrade $http_upgrade;
+        # proxy_set_header Connection "upgrade";
+
+        # Don't cache the HTML shell — you want fresh index.html on every deploy
+        add_header Cache-Control "no-cache";
+    }
+}
+
+
+server {
+    if ($host = todo.thegenesys.tech) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+        listen 80 ;
+        listen [::]:80 ;
+    server_name todo.thegenesys.tech;
+    return 404; # managed by Certbot
+
+
+}

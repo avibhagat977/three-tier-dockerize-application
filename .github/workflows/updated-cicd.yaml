@@ -43,7 +43,7 @@ jobs:
          services='[]'
 
          if [[ "${{ steps.filter.outputs.backend }}" == "true" ]]; then
-           services=$(jq -c --arg service "backend" --arg dockerfile "backend/Dockerfile" --arg context "." '. + [{"service": $service, "dockerfile": $dockerfile, "context": $context}]' <<<"$services")
+           services=$(jq -c --arg service "backend" --arg dockerfile "backend/Dockerfile" --arg context "backend" '. + [{"service": $service, "dockerfile": $dockerfile, "context": $context}]' <<<"$services")
          fi
 
 
@@ -115,6 +115,7 @@ jobs:
  Deploy_EC2:
    name: Deploy to Production
    runs-on: ubuntu-latest
+   
    needs: [changes, build_images]
    # Run as long as neither build job hard-failed. A skipped build job
    # (because that folder didn't change) must not block deployment of the other.
@@ -122,7 +123,8 @@ jobs:
      always() &&
      !contains(needs.*.result, 'failure') &&
      !contains(needs.*.result, 'cancelled') &&
-     (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true')
+     (needs.changes.outputs.backend == 'disabled' || needs.changes.outputs.frontend == 'disabled')
+    #  (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true')
    steps:
      - name: Checkout
        uses: actions/checkout@v3
@@ -148,7 +150,7 @@ jobs:
          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
-         POSTGRES_URL: ${{ vars.POSTGRES_URL }}
+         POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
          BACKEND_PORT: ${{ vars.BACKEND_PORT }}
          FRONTEND_PORT: ${{ vars.FRONTEND_PORT }}
          AWS_DEFAULT_REGION: us-east-1
@@ -182,14 +184,28 @@ jobs:
            fi
 
            mkdir -p ./tosend
+
+           # Create the postgres init directory
+           mkdir -p ./tosend/init/postgres
+
+           # Copy database initialization files
+           cp init/postgres/01_schema.sql ./tosend/init/postgres/
+           cp init/postgres/02_seed.sql ./tosend/init/postgres/
+           echo "===== Contents of ./tosend ====="
+           find ./tosend
+
            envsubst < ./remote-deploy/env.template > ./tosend/.env
+           envsubst '${FRONTEND_PORT}' < ./remote-deploy/nginx.conf.template > ./tosend/nginx.conf
+           ls -la ./tosend
            echo "Environment variables for deployment: ......"
-           cat ./tosend/.env
+           # cat ./tosend/.env
 
            echo "Services to deploy: ${SERVICES[*]}"
-           export ECR_LOGIN_COMMAND=$(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-           echo $ECR_LOGIN_COMMAND > ./tosend/login.sh
+           ECR_REGISTRY_HOST="${ECR_REGISTRY_REPO%/*}"
+           export ECR_LOGIN_COMMAND="aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_HOST}"
+           printf '%s\n' "$ECR_LOGIN_COMMAND" > ./tosend/login.sh
            envsubst '${ECR_LOGIN_COMMAND}' < ./remote-deploy/deploy.sh > ./tosend/deploy.sh
+           #chmod +x ./tosend/deploy.sh
            envsubst < ./remote-deploy/docker-compose.yml > ./tosend/docker-compose.yml
            echo "Deployment script to run on remote server ......"
            cat  ./tosend/deploy.sh
@@ -202,8 +218,7 @@ jobs:
             #  bash deployment/deploy.sh "$SERVICE"
            done
 
-
-  Deploy_ECS:
+ Deploy_ECS:
       name: Deploy to ECS (parallel)
       runs-on: ubuntu-latest
       needs: [changes, build_images]
@@ -287,3 +302,4 @@ jobs:
             service: ${{ vars.ECS_FRONTEND_SERVICE }}
             cluster: ${{ vars.ECS_CLUSTER }}
             wait-for-service-stability: true
+           

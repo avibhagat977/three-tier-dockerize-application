@@ -26,20 +26,38 @@ if [[ "$STOP" == "YES" ]]; then
 fi
 
 # ------------------------------------
-# Stop Service
-# ------------------------------------
-docker compose -f docker-compose.yml --env-file .env down "$SERVICE_NAME"
-
-# ------------------------------------
 # Login ECR
 # ------------------------------------
+echo "Logging into Amazon ECR..."
 eval "${ECR_LOGIN_COMMAND}"
 
 # ------------------------------------
-# Pull & Start
+# First deployment detection
 # ------------------------------------
-docker compose -f docker-compose.yml --env-file .env pull "$SERVICE_NAME"
-docker compose -f docker-compose.yml --env-file .env up -d "$SERVICE_NAME"
+if [ -z "$(docker compose -f docker-compose.yml --env-file .env ps -q)" ]; then
+    echo "======================================"
+    echo "First deployment detected."
+    echo "Bootstrapping complete application..."
+    echo "======================================"
+
+    docker compose -f docker-compose.yml --env-file .env pull
+    docker compose -f docker-compose.yml --env-file .env up -d
+
+    echo "Application bootstrapped successfully."
+    exit 0
+fi
+
+# ------------------------------------
+# Rolling deployment
+# ------------------------------------
+echo "Updating application..."
+
+docker compose -f docker-compose.yml --env-file .env down
+docker compose -f docker-compose.yml --env-file .env pull
+docker compose -f docker-compose.yml --env-file .env up -d
+
+echo "Deployment completed successfully."
+
 
 
 # ------------------------------------
