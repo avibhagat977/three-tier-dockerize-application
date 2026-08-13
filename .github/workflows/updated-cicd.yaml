@@ -272,9 +272,14 @@ jobs:
           env:
             IMAGE_TAG: ${{ steps.deploy-vars-ecs.outputs.backend_tag }}
             ECR_REGISTRY_REPO: ${{ steps.deploy-vars-ecs.outputs.ecr_registry_repo }}
+            CONTAINER_NAME: backend
+            FAMILY: todo-backend
+            CONTAINER_PORT: 8080
+            POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+            AWS_DEFAULT_REGION: us-east-1
           run: |
             export IMAGE_NAME="${ECR_REGISTRY_REPO}:${IMAGE_TAG}"
-            envsubst < remote-deploy/task-definition-template.json > remote-deploy/task-definition-backend.json
+            envsubst < remote-deploy/task-definition-template-backend.json > remote-deploy/task-definition-backend.json
 
         - name: Deploy backend to ECS
           if: ${{ needs.changes.outputs.backend == 'true' }}
@@ -290,9 +295,13 @@ jobs:
           env:
             IMAGE_TAG: ${{ steps.deploy-vars-ecs.outputs.frontend_tag }}
             ECR_REGISTRY_REPO: ${{ steps.deploy-vars-ecs.outputs.ecr_registry_repo }}
+            CONTAINER_NAME: frontend
+            FAMILY: todo-frontend
+            CONTAINER_PORT: 4173
+            AWS_DEFAULT_REGION: us-east-1
           run: |
             export IMAGE_NAME="${ECR_REGISTRY_REPO}:${IMAGE_TAG}"
-            envsubst < remote-deploy/task-definition-template.json > remote-deploy/task-definition-frontend.json
+            envsubst < remote-deploy/task-definition-template-frontend.json > remote-deploy/task-definition-frontend.json
 
         - name: Deploy frontend to ECS
           if: ${{ needs.changes.outputs.frontend == 'true' }}

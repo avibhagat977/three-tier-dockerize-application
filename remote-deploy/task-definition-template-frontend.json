@@ -1,0 +1,36 @@
+{
+  "family": "${FAMILY}",
+  "networkMode": "awsvpc",
+  "executionRoleArn": "${EXECUTION_ROLE_ARN}",
+  "taskRoleArn": "${TASK_ROLE_ARN}",
+  "containerDefinitions": [
+    {
+      "name": "${CONTAINER_NAME}",
+      "image": "${IMAGE_NAME}",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "containerPort": "${CONTAINER_PORT}",
+          "hostPort": "${CONTAINER_PORT}",
+          "protocol": "tcp",
+          "name": "${CONTAINER_NAME}-${CONTAINER_PORT}-tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "environment": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/${FAMILY}",
+          "awslogs-create-group": "true",
+          "awslogs-region": "${AWS_DEFAULT_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024"
+}
