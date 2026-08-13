@@ -275,7 +275,7 @@ jobs:
             BACKEND_TASK_ROLE_ARN: ${{ vars.BACKEND_TASK_ROLE_ARN }}
             BACKEND_CONTAINER_NAME: ${{ vars.BACKEND_CONTAINER_NAME }}
             BACKEND_CONTAINER_PORT: ${{ vars.BACKEND_CONTAINER_PORT }}
-            BACKEND_POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+            BACKEND_POSTGRES_URL: ${{ vars.BACKEND_POSTGRES_URL }}
             BACKEND_AWS_DEFAULT_REGION: ${{ vars.BACKEND_AWS_DEFAULT_REGION }}
             IMAGE_TAG: ${{ steps.deploy-vars-ecs.outputs.backend_tag }}
             ECR_REGISTRY_REPO: ${{ steps.deploy-vars-ecs.outputs.ecr_registry_repo }}

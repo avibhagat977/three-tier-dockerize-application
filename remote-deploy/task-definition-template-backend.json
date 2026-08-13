@@ -20,7 +20,7 @@
       "essential": true,
       "environment": [
         { "name": "PORT", "value": "${BACKEND_CONTAINER_PORT}" },
-        { "name": "POSTGRES_URL", "value": "${POSTGRES_URL}" }
+        { "name": "POSTGRES_URL", "value": "${BACKEND_POSTGRES_URL}" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
