@@ -1,33 +1,33 @@
 {
-  "family": "${FAMILY}",
+  "family": "${BACKEND_FAMILY}",
   "networkMode": "awsvpc",
-  "executionRoleArn": "${EXECUTION_ROLE_ARN}",
-  "taskRoleArn": "${TASK_ROLE_ARN}",
+  "executionRoleArn": "${BACKEND_EXECUTION_ROLE_ARN}",
+  "taskRoleArn": "${BACKEND_TASK_ROLE_ARN}",
   "containerDefinitions": [
     {
-      "name": "${CONTAINER_NAME}",
-      "image": "${IMAGE_NAME}",
+      "name": "${BACKEND_CONTAINER_NAME}",
+      "image": "${BACKEND_IMAGE_NAME}",
       "cpu": 0,
       "portMappings": [
         {
-          "containerPort": "${CONTAINER_PORT}",
-          "hostPort": "${CONTAINER_PORT}",
+          "containerPort": "${BACKEND_CONTAINER_PORT}",
+          "hostPort": "${BACKEND_CONTAINER_PORT}",
           "protocol": "tcp",
-          "name": "${CONTAINER_NAME}-${CONTAINER_PORT}-tcp",
+          "name": "${BACKEND_CONTAINER_NAME}-${BACKEND_CONTAINER_PORT}-tcp",
           "appProtocol": "http"
         }
       ],
       "essential": true,
       "environment": [
-        { "name": "PORT", "value": "${CONTAINER_PORT}" },
+        { "name": "PORT", "value": "${BACKEND_CONTAINER_PORT}" },
         { "name": "POSTGRES_URL", "value": "${POSTGRES_URL}" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/${FAMILY}",
+          "awslogs-group": "/ecs/${BACKEND_FAMILY}",
           "awslogs-create-group": "true",
-          "awslogs-region": "${AWS_DEFAULT_REGION}",
+          "awslogs-region": "${BACKEND_AWS_DEFAULT_REGION}",
           "awslogs-stream-prefix": "ecs"
         }
       }
