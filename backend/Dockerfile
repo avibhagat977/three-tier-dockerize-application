@@ -14,11 +14,19 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o devboard-backend ./
 # Stage 2: Production Stage
 FROM alpine:3.21
 
+# Install tools required by healthcheck.sh
+RUN apk add --no-cache curl jq
+
 WORKDIR /app
 
 RUN apk add --no-cache wget
 
 COPY --from=build /app/devboard-backend ./
+
+COPY healthcheck.sh ./
+
+RUN chmod +x healthcheck.sh
+
 
 EXPOSE 8080
 
