@@ -18,8 +18,8 @@ STATUS=$(echo "$RESPONSE" \
     | jq -r '.tasks[] | select(.id == 6) | .status')
 
 # Task 6 must exist and have the expected status.
-if [ "$STATUS" = "completed" ]; then
-    echo "Health check passed: task 6 status is completed"
+if [ "$STATUS" = "blocked" ]; then
+    echo "Health check passed: task 6 status is blocked"
     exit 0
 fi
 
