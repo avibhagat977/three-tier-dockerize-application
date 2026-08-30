@@ -283,6 +283,14 @@ jobs:
             export BACKEND_IMAGE_NAME="${ECR_REGISTRY_REPO}:${IMAGE_TAG}"
             envsubst < remote-deploy/task-definition-template-backend.json > remote-deploy/task-definition-backend.json
 
+             # Debug: print the generated health check
+            echo "===== GENERATED HEALTH CHECK ====="
+            jq '.containerDefinitions[] | select(.name == "backend") | .healthCheck' \
+              remote-deploy/task-definition-backend.json
+
+            echo "===== FULL GENERATED TASK DEFINITION ====="
+            cat remote-deploy/task-definition-backend.json
+
         - name: Deploy backend to ECS
           if: ${{ needs.changes.outputs.backend == 'true' }}
           uses: aws-actions/amazon-ecs-deploy-task-definition@v1

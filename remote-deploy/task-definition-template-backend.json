@@ -22,6 +22,16 @@
         { "name": "PORT", "value": "${BACKEND_CONTAINER_PORT}" },
         { "name": "POSTGRES_URL", "value": "${BACKEND_POSTGRES_URL}" }
       ],
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "./healthcheck.sh"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 30
+      },
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
